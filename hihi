@@ -1,0 +1,185 @@
+# Работа с реестром npm
+
+Npm можно настроить для публикации пакетов и использования пакетов GitHub Packages , хранящихся GitHub Packages в качестве зависимостей в проекте npm.
+
+<!-- 2148AF7B-5FF8-4B28-A808-D692FEE2225A -->
+
+## Аутентификация в GitHub Packages
+
+> \[!NOTE]
+> GitHub Packages поддерживает только проверку подлинности с помощью personal access token (classic). Дополнительные сведения см. в разделе [Управление личными маркерами доступа](/ru/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
+
+Для публикации, установки и удаления частных, внутренних и общедоступных пакетов требуется маркер доступа.
+
+Можно использовать personal access token (classic) для проверки подлинности в API GitHub Packages или API GitHub . При создании personal access token (classic)можно назначить маркер различным областям в зависимости от ваших потребностей. Дополнительные сведения о областях, связанных с пакетами, для personal access token (classic), см. в разделе [Сведения о разрешениях для пакетов GitHub](/ru/packages/learn-github-packages/about-permissions-for-github-packages#about-scopes-and-permissions-for-package-registries).
+
+Для проверки подлинности в реестре GitHub Packages в рабочем процессе GitHub Actions можно использовать следующее:
+
+* `GITHUB_TOKEN` для публикации пакетов, связанных с репозиторием рабочих процессов.
+* personal access token (classic) с по крайней мере `read:packages` областью действия для установки пакетов, связанных с другими частными репозиториями (`GITHUB_TOKEN` можно использовать, если репозиторий предоставлен доступ на чтение к пакету. См [. раздел AUTOTITLE](/ru/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility).
+
+### Проверка подлинности в GitHub Actions рабочем процессе
+
+Этот реестр поддерживает детализированные разрешения. Для реестров, поддерживающих детализированные разрешения, если рабочий GitHub Actions процесс используется personal access token для проверки подлинности в реестре, настоятельно рекомендуется обновить рабочий процесс для использования `GITHUB_TOKEN`. Рекомендации по обновлению рабочих процессов, прошедших проверку подлинности в реестре с помощью personal access token[autoTITLE](/ru/packages/managing-github-packages-using-github-actions-workflows/publishing-and-installing-a-package-with-github-actions#upgrading-a-workflow-that-accesses-a-registry-using-a-personal-access-token).
+
+> \[!NOTE]
+> Возможность удаления и восстановления пакетов с помощью REST API GitHub Actions в настоящее время находится в Публичный предварительный просмотр и подлежит изменению.
+
+Вы можете использовать рабочий `GITHUB_TOKEN`GitHub Actions процесс для удаления или восстановления пакета с помощью REST API, если маркер имеет `admin` разрешение на пакет. Репозитории, публикующие пакеты с помощью рабочего процесса и репозиториев, которые явно подключены к пакетам, автоматически предоставляются `admin` разрешения на пакеты в репозитории.
+
+Дополнительные сведения см. в `GITHUB_TOKEN`разделе [Использование GITHUB\_TOKEN для проверки подлинности в рабочих процессах](/ru/actions/tutorials/authenticate-with-github_token#using-the-github_token-in-a-workflow). Дополнительные сведения о рекомендациях при использовании реестра в действиях см. в разделе [Скомпрометированные бегуна](/ru/actions/concepts/security/compromised-runners#cross-repository-access).
+
+Вы также можете предоставить разрешения на доступ к пакетам независимо друг от другаGitHub CodespacesGitHub Actions. Дополнительные сведения см. в разделе \[AUTOTITLE и [Настройка управления доступом и видимости пакета](/ru/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility#ensuring-github-codespaces-access-to-your-package)]\(/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility#ensuring-workflow-access-to-your-package).
+
+### Аутентификация с помощью personal access token
+
+Необходимо использовать personal access token (classic) с соответствующими областями для публикации и установки пакетов в GitHub Packages. Дополнительные сведения см. в разделе [Введение в GitHub Packages](/ru/packages/learn-github-packages/introduction-to-github-packages#authenticating-to-github-packages).
+
+Вы можете выполнить проверку подлинности с помощью npm, изменив GitHub Packages файл для каждого пользователя `~/.npmrc` , чтобы включить или personal access token (classic) войти в npm в командной строке с помощью имени пользователя и personal access token.
+
+Чтобы выполнить проверку подлинности путем добавления personal access token (classic)`~/.npmrc` файла в файл, измените `~/.npmrc` файл для проекта, чтобы включить следующую строку, заменив ТОКЕНом personal access token. Создайте файл `~/.npmrc` , если он не существует.
+
+```shell
+//npm.pkg.github.com/:_authToken=TOKEN
+```
+
+Чтобы выполнить проверку подлинности, выполнив вход в npm, используйте `npm login` команду, заменив имя пользователя именем пользователя, TOKEN с GitHubвашим personal access token (classic) именем пользователя и общедоступнымEMAIL-ADDRESS адресом электронной почты.
+
+Если вы используете npm CLI версии 9 или более поздней версии и войдите в частный реестр или выходите из частного реестра с помощью командной строки, используйте `--auth-type=legacy` параметр для чтения сведений о проверке подлинности из запросов вместо использования потока входа по умолчанию через браузер. Дополнительные сведения см. в разделе [`npm-login`](https://docs.npmjs.com/cli/v10/commands/npm-login).
+
+Если GitHub Packages вы не являетесь реестром пакетов по умолчанию для использования npm и хотите использовать `npm audit` команду, рекомендуется использовать `--scope` флаг с пространством имен, на котором размещается пакет (личная учетная запись или организация, в которой пакет принадлежит репозиторию, в котором размещен) при проверке подлинностиGitHub Packages.
+
+```shell
+$ npm login --scope=@NAMESPACE --auth-type=legacy --registry=https://npm.pkg.github.com
+
+> Username: USERNAME
+> Password: TOKEN
+```
+
+## Публикация пакета
+
+> \[!NOTE]
+
+> * Имена пакетов и области должны использовать только строчные буквы.
+> * Тарбол для версии npm должен быть меньше 256 МБ.
+
+Реестр GitHub Packages хранит пакеты npm в вашей организации или личной учетной записи и позволяет связать пакет с репозиторием. Можно указать, нужно ли наследовать разрешения из репозитория или задавать детализированные разрешения независимо от репозитория.
+
+При первой публикации пакета для параметра видимости по умолчанию выбирается закрытый доступ. Чтобы изменить видимость или задать разрешения доступа, см. раздел [Настройка управления доступом и видимости пакета](/ru/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility). Дополнительные сведения о связывании опубликованного пакета с репозиторием см. в разделе [Подключение репозитория к пакету](/ru/packages/learn-github-packages/connecting-a-repository-to-a-package).
+
+Пакет можно подключить к репозиторию сразу после публикации пакета, включив `repository` поле в `package.json` файл. Этот метод также можно использовать для подключения нескольких пакетов к одному репозиторию. Дополнительные сведения см. в статье ["Публикация нескольких пакетов в одном репозитории](#publishing-multiple-packages-to-the-same-repository)".
+
+> \[!NOTE]
+> При публикации пакета, связанного с репозиторием, пакет автоматически наследует разрешения доступа связанного репозитория, а рабочие процессы GitHub Actions в связанном репозитории автоматически получают доступ к пакету, если ваша организация не отключила автоматическое наследование разрешений доступа. Дополнительные сведения см. в разделе [Настройка управления доступом и видимости пакета](/ru/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility#about-inheritance-of-access-permissions).
+
+Сопоставление областей для проекта можно настроить с помощью локального `.npmrc` файла в проекте или с помощью `publishConfig` параметра .`package.json`
+GitHub Packages поддерживает только пакеты npm с областью действия. Имена пакетов с ограниченной областью имеют формат `@NAMESPACE/PACKAGE-NAME`. Пакеты с ограниченной областью всегда начинаются с символа `@`. Возможно, вам потребуется обновить имя в вашем `package.json` имени, чтобы использовать имя области. Например, если вы являетесь пользователем `octocat` и именем `test`пакета, назначьте имя пакета с областью следующим образом: `"name": "@octocat/test"`
+
+После публикации пакет можно просмотреть здесь: GitHub. Дополнительные сведения см. в разделе [Просмотр пакетов](/ru/packages/learn-github-packages/viewing-packages).
+
+### Публикация пакета с помощью локального `.npmrc` файла
+
+Файл можно использовать `.npmrc` для настройки сопоставления областей для проекта.
+`.npmrc` В файле используйте URL-адрес и владельца учетной GitHub Packages записи, чтобы GitHub Packages определить, куда направлять запросы пакетов.
+`.npmrc` Использование файла запрещает другим разработчикам случайно публиковать пакет в npmjs.org вместо GitHub Packagesнего.
+
+1. Пройдите проверку подлинности в GitHub Packages. Дополнительные сведения см. в разделе ["Проверка подлинности в GitHub Packages](#authenticating-to-github-packages).
+
+2. В том же каталоге, что `package.json` и файл, создайте или измените `.npmrc` файл, чтобы включить строку, указывающую URL-адрес GitHub Packages и пространство имен, в котором размещен пакет. Замените `NAMESPACE` именем учетной записи пользователя или организации , в которой пакет будет ограничен.
+
+   ```shell
+   @NAMESPACE:registry=https://npm.pkg.github.com
+   ```
+
+3. Добавьте файл *NPMRC* в репозиторий, где GitHub Packages может найти ваш проект. Дополнительные сведения см. в разделе [Добавление файла в репозиторий](/ru/repositories/working-with-files/managing-files/adding-a-file-to-a-repository).
+
+4. Проверьте имя пакета в проекте `package.json`. Поле `name` должно содержать область и имя пакета. Например, если пакет называется "test", и вы публикуете его в организации "My-org" GitHub , `name` поле в вашем `package.json` поле должно быть `@my-org/test`.
+
+5. `repository` Проверьте поле в проекте`package.json`. Значение поля `repository` должно соответствовать URL-адресу репозитория GitHub. Например, если URL-адрес репозитория — это `github.com/my-org/test`, значением поля репозитория должно быть `https://github.com/my-org/test.git`.
+
+6. Публикация пакета:
+
+   ```shell
+   npm publish
+   ```
+
+### Публикация пакета с помощью `publishConfig` файла `package.json`
+
+Элемент в `publishConfig` файле можно использовать `package.json` для указания реестра, в котором требуется опубликовать пакет. Дополнительные сведения см [. в статье publishConfig](https://docs.npmjs.com/files/package.json#publishconfig) в документации по npm.
+
+1. Измените `package.json` файл пакета и добавьте `publishConfig` запись.
+
+   ```shell
+   "publishConfig": {
+     "registry": "https://npm.pkg.github.com"
+   },
+   ```
+
+2. `repository` Проверьте поле в проекте`package.json`. Значение поля `repository` должно соответствовать URL-адресу репозитория GitHub. Например, если URL-адрес репозитория — это `github.com/my-org/test`, значением поля репозитория должно быть `https://github.com/my-org/test.git`.
+
+3. Публикация пакета:
+
+   ```shell
+   npm publish
+   ```
+
+## Публикация нескольких пакетов в одном репозитории
+
+Чтобы опубликовать несколько пакетов и связать их с одинаковым репозиторием, можно включить URL-адрес GitHub репозитория в `repository` поле `package.json` файла для каждого пакета. Дополнительные сведения см. в разделе ["Создание файла](https://docs.npmjs.com/creating-a-package-json-file) package.json" и ["Создание модулей](https://docs.npmjs.com/creating-node-js-modules) Node.js" в документации npm.
+
+Чтобы убедиться, что URL-адрес репозитория правильный, замените `REPOSITORY` именем репозитория, содержащего пакет, который требуется опубликовать, и `OWNER` именем личной учетной записи или организации, GitHub в которой принадлежит репозиторий.
+
+GitHub Packages будет соответствовать репозиторию на основе URL-адреса пакета.
+
+```shell
+"repository":"https://github.com/OWNER/REPOSITORY",
+```
+
+## Установка пакета
+
+Пакеты можно установить, GitHub Packages добавив их в качестве зависимостей в `package.json` файле проекта. Дополнительные сведения об использовании `package.json` в проекте см. в статье ["Работа с package.json"](https://docs.npmjs.com/getting-started/using-a-package.json) в документации npm.
+
+По умолчанию вы можете добавлять пакеты из одной организации. Дополнительные сведения см. в разделе ["Установка пакетов из других организаций](#installing-packages-from-other-organizations)".
+
+Кроме того, необходимо добавить файл в `.npmrc` проект, чтобы все запросы на установку пакетов проходили.GitHub Packages При маршрутизации всех запросов GitHub Packagesпакетов можно использовать как области, так и неуправляемые пакеты из *npmjs.org*. Дополнительные сведения см. в [документации по npm](https://docs.npmjs.com/misc/scope) .
+
+1. Пройдите проверку подлинности в GitHub Packages. Дополнительные сведения см. в разделе ["Проверка подлинности в GitHub Packages](#authenticating-to-github-packages).
+
+2. В том же каталоге, что `package.json` и файл, создайте или измените `.npmrc` файл, чтобы включить строку, указывающую URL-адрес GitHub Packages и пространство имен, в котором размещен пакет. Замените `NAMESPACE` именем учетной записи пользователя или организации , в которой пакет будет ограничен.
+
+   ```shell
+   @NAMESPACE:registry=https://npm.pkg.github.com
+   ```
+
+3. Добавьте файл *NPMRC* в репозиторий, где GitHub Packages может найти ваш проект. Дополнительные сведения см. в разделе [Добавление файла в репозиторий](/ru/repositories/working-with-files/managing-files/adding-a-file-to-a-repository).
+
+4. Настройте `package.json` в проекте использование устанавливаемого пакета. Чтобы добавить зависимости пакета в `package.json` файл GitHub Packages, укажите полное имя пакета, например `@my-org/server`. Для пакетов из *npmjs.com* укажите полное имя, такое как `@babel/core` или `lodash`. Замените `ORGANIZATION_NAME/PACKAGE_NAME` зависимостью пакета.
+
+   ```json
+   {
+     "name": "@my-org/server",
+     "version": "1.0.0",
+     "description": "Server app that uses the ORGANIZATION_NAME/PACKAGE_NAME package",
+     "main": "index.js",
+     "author": "",
+     "license": "MIT",
+     "dependencies": {
+       "ORGANIZATION_NAME/PACKAGE_NAME": "1.0.0"
+     }
+   }
+   ```
+
+5. Установите пакет .
+
+   ```shell
+   npm install
+   ```
+
+### Установка пакетов из других организаций
+
+По умолчанию можно использовать GitHub Packages только пакеты из одной организации. Если вы хотите перенаправить запросы пакетов нескольким организациям и пользователям, вы можете добавить в файл дополнительные строки`.npmrc`, заменив `NAMESPACE1``NAMESPACE2` имена личных учетных записей или организаций, в которые входят пакеты, в которых находятся
+
+```shell
+@NAMESPACE1:registry=https://npm.pkg.github.com
+@NAMESPACE2:registry=https://npm.pkg.github.com
+```
