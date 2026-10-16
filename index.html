@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Новости о Вите, короткие видео и сообщения сообщества.">
+<title>Vitya News 2В</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="setup" class="overlay">
+  <section class="setup-card">
+    <div class="brand-mark">VN</div><p class="eyebrow">ТВОЁ СООБЩЕСТВО</p>
+    <h1>Добро пожаловать в <span>Vitya News 2В</span></h1>
+    <p class="muted">Для начала выбери устройство, с которого заходишь.</p>
+    <div class="choice-row"><button class="choice" data-device="Телефон">📱 Телефон</button><button class="choice" data-device="Компьютер">💻 Компьютер</button></div>
+    <label for="role">Кто ты?</label>
+    <select id="role"><option>Учительница 2 «В» класса</option><option>Одноклассник 2 «В» класса</option><option>Другой пользователь</option></select>
+    <div id="otherFields"><label for="nickname">Твой ник</label><input id="nickname" maxlength="32" placeholder="Например, Vitya"><label for="code">Код доступа</label><input id="code" maxlength="64" placeholder="Введи свой код"></div>
+    <p class="hint">Для каждого пользователя нужен свой ник и личный код доступа. Не сообщай код другим.</p>
+    <button id="enter" class="primary" disabled>Войти →</button><p id="loginError" class="error"></p>
+  </section>
+</div>
+<header class="topbar"><a class="logo" href="#"><span class="brand-mark small">VN</span><span>Vitya <b>News 2В</b></span></a><span id="deviceTag" class="device-tag"></span><div class="user-chip" id="userChip">Не выполнен вход</div></header>
+<div class="layout">
+<aside class="sidebar"><p class="eyebrow">РАЗДЕЛЫ</p><button class="nav active" data-tab="news">◈ <span>Новости</span></button><button class="nav" data-tab="videos">▷ <span>Мини-видосики</span></button><button class="nav" data-tab="messages">▤ <span>Сообщения</span><span id="messageCount" class="count"></span></button><button class="nav" data-tab="programs">▣ <span>Программы</span></button><div class="sidebar-bottom"><div class="online-dot"></div><span>Лента сообщества</span></div></aside>
+<main>
+<section id="newsTab" class="tab"><div class="hero"><div><p class="eyebrow">НОВОСТИ СООБЩЕСТВА</p><h1>Vitya <span>News 2В</span></h1><p>Новости о Вите, короткие видео и сообщения сообщества.</p></div><div class="hero-icon">✦</div></div>
+<div class="section-head"><div><p class="eyebrow">СВЕЖИЕ ПУБЛИКАЦИИ</p><h2>Лента новостей</h2></div></div>
+<form id="postForm" class="composer"><textarea id="postText" maxlength="2000" placeholder="Расскажи всем, что нового…"></textarea><div class="composer-bottom"><span>Будь вежливым и не публикуй личные данные.</span><button class="primary" type="submit">Опубликовать ↗</button></div></form><div id="posts" class="feed"></div>
+</section>
+<section id="videosTab" class="tab hidden"><div class="section-head"><div><p class="eyebrow">КОРОТКИЕ РОЛИКИ</p><h2>Мини-видосики</h2><p class="muted">Просто положи MP4 или WebM в папку <code>public/Mini-Videos/</code> — ролики появятся здесь автоматически.</p></div></div><div id="videos" class="video-grid"></div></section>
+<section id="programsTab" class="tab hidden"><div class="section-head"><div><p class="eyebrow">ФАЙЛЫ СООБЩЕСТВА</p><h2>Программы и файлы</h2><p class="muted">Положи программу или файл в <code>public/Programs/</code> — он появится в списке автоматически.</p></div></div><div id="programs" class="program-grid"></div></section>
+<section id="messagesTab" class="tab hidden"><div class="section-head"><div><p class="eyebrow">ОБЩЕНИЕ</p><h2>Сообщения</h2><p class="muted">Сообщения видны всем, кто пользуется одним и тем же запущенным сайтом.</p></div></div><div id="chat" class="chat-list"></div><form id="messageForm" class="composer chat-composer"><textarea id="messageText" maxlength="2000" placeholder="Напиши сообщение…" required></textarea><div class="composer-bottom"><span>Отправить от имени: <b id="postingAs">—</b></span><button class="primary" type="submit">Отправить ↗</button></div></form></section>
+<footer>Vitya News 2В · Общайся дружелюбно и береги личные данные.</footer>
+</main></div><script src="app.js"></script></body></html>

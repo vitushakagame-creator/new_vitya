@@ -1,0 +1,8 @@
+{
+  "name": "vitya-news",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Сайт «Vitya News 2В» — новости и сообщения",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}
